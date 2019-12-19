@@ -84,65 +84,12 @@ evaluate2 xs (OpExp e1 e2) = case evaluate2 xs e1 of
     joinfun :: (Float -> Float -> Float) -> Char -> (Float, String) -> (Float, String) -> (Float, String)
     joinfun op c (r1, eqn1) (r2, eqn2) = (r1 `op` r2, "(" ++ eqn1 ++ [' ', c, ' '] ++ eqn2 ++ ")")
 
+-- fold for tuples
 joinPair :: (a -> b -> c) -> (a, b) -> c
 joinPair f (a, b) = f a b
 
+-- permutations
 perm :: [a] -> [a] -> [(a, a)]
 perm (a:as) (b:bs) = (a,b) : (map ((,) a) bs) ++ perm as (b:bs)
 perm _ _ = []
 
-
--- 3 + 2 * 6 = op 3 (paren (op 2 6))
---             op (op 3 2) 6
-
--- 1 + ()
--- 1 + 1 + ()
--- 8 x 6 / 4 - 2
--- (7 x (9 + 2) + 3) / 8
--- if n == 2
--- then [NumExp + NumExp] ++ [NumExp * NumExp] ++ [NumExp - NumExp] ...
-
--- unparsing n = (unparsing n - i) ++ (unparsing i)
-
-
--- Parens (OpExp NumExp (Parens (OpExp NumExp NumExp))), ( 1 + ( 1 + 1 ) )
--- Parens (OpExp NumExp (OpExp NumExp NumExp)), ( 1 + 1 + 1 )
--- OpExp NumExp (Parens (OpExp NumExp NumExp)),  1 + ( 1 + 1 )
--- OpExp NumExp (OpExp NumExp NumExp)] 1 + 1 + 1
-
-
--- Parens (OpExp NumExp (Parens (OpExp NumExp (Parens (OpExp NumExp NumExp))))), ( 1 + ( 1 + ( 1 + 1 ) ) )
--- Parens (OpExp NumExp (Parens (OpExp NumExp (OpExp NumExp NumExp)))), ( 1 + ( 1 + 1 + 1 ) )
--- Parens (OpExp NumExp (OpExp NumExp (Parens (OpExp NumExp NumExp)))), ( 1 + 1 + ( 1 + 1 ) )
--- Parens (OpExp NumExp (OpExp NumExp (OpExp NumExp NumExp))), ( 1 + 1 + 1 + 1 )
--- OpExp NumExp (Parens (OpExp NumExp (Parens (OpExp NumExp NumExp)))), (  )
--- OpExp NumExp (Parens (OpExp NumExp (OpExp NumExp NumExp))),
--- OpExp NumExp (OpExp NumExp (Parens (OpExp NumExp NumExp))),
--- OpExp NumExp (OpExp NumExp (OpExp NumExp NumExp))
-
--- Parens (OpExp NumExp (Parens (OpExp NumExp NumExp))),
--- Parens (OpExp NumExp (OpExp NumExp NumExp)),
--- OpExp NumExp (Parens (OpExp NumExp NumExp)),
--- OpExp NumExp (OpExp NumExp NumExp)
-
-
--- OpExp NumExp (OpExp NumExp NumExp), 1 + ( 1 + 1 )
--- OpExp NumExp (OpExp NumExp NumExp), 1 + ( 1 + 1 )
--- OpExp (OpExp NumExp NumExp) NumExp, ( 1 + 1 ) + 1
--- OpExp (OpExp NumExp NumExp) NumExp  ( 1 + 1 ) + 1
-
-
-
--- OpExp NumExp (OpExp NumExp (OpExp NumExp NumExp)), 1 + ( 1 + ( 1 + 1 ) )
--- OpExp NumExp (OpExp NumExp (OpExp NumExp NumExp)), 1 + ( 1 + ( 1 + 1 ) )
--- OpExp NumExp (OpExp (OpExp NumExp NumExp) NumExp), 1 + ( ( 1 + 1 ) + 1 )
--- OpExp NumExp (OpExp (OpExp NumExp NumExp) NumExp), 1 + ( ( 1 + 1 ) + 1 )
--- OpExp (OpExp NumExp (OpExp NumExp NumExp)) NumExp, ( 1 + ( 1 + 1 ) + 1 )
--- OpExp (OpExp NumExp (OpExp NumExp NumExp)) NumExp, ( 1 + ( 1 + 1 ) + 1 )
--- OpExp (OpExp (OpExp NumExp NumExp) NumExp) NumExp, ( ( 1 + 1 ) + 1 ) + 1
--- OpExp (OpExp (OpExp NumExp NumExp) NumExp) NumExp  ( ( 1 + 1 ) + 1 ) + 1
-
--- (10.0,"(7.0 - (9.0 / (2.0 + (3.0 - 8.0))))"),
--- (10.0,"(7.0 - (9.0 / ((2.0 + 3.0) - 8.0)))"),
--- (10.0,"(((7.0 * (9.0 + 2.0)) + 3.0) / 8.0)"),
--- (10.0,"((((7.0 - 9.0) / 2.0) + 3.0) + 8.0)")
